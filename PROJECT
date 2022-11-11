@@ -1,0 +1,20 @@
+domain: ethzero.cloud
+layout:
+- go.kubebuilder.io/v3
+projectName: team-controller
+repo: github.com/jeremymv2/team-controller
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: ethzero.cloud
+  group: org
+  kind: Team
+  path: github.com/jeremymv2/team-controller/api/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+version: "3"
