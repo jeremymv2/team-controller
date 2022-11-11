@@ -1,0 +1,76 @@
+name: Main
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+    # Set job outputs to values from filter step
+    outputs:
+      bump_app: ${{ steps.filter.outputs.bump_app }}
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+      with:
+        ref: main
+
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          bump_app:
+            - 'api/**'
+            - 'config/**'
+            - 'controllers/**'
+            - '*go*'
+            - 'package.json'
+
+  bump_build_push:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.bump_app == 'true'
+    name: Bump Version(s)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      - name: Bump Application version
+        if: needs.detect_changes.outputs.bump_app == 'true'
+        id: app-version-bump
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          minor-wording:  'add,Adds,new'
+          major-wording:  'MAJOR,cut-major'
+          patch-wording:  'patch,fixes'     # Providing patch-wording will override commits
+                                            # defaulting to a patch bump.
+          rc-wording:     'RELEASE,alpha'
+          skip-commit: 'true'
+          skip-tag: 'true'
+          skip-push: 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        if: needs.detect_changes.outputs.bump_app == 'true'
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          make docker-build
+          make docker-push
+      - name: Commit Files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -am 'CI: ${{ steps.app-version-bump.outputs.newTag }}'
+      - name: Tag repo
+        if: needs.detect_changes.outputs.bump_app == 'true'
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ steps.app-version-bump.outputs.newTag }}
+          message: "CI: bump to new version ${{ steps.app-version-bump.outputs.newTag }}"
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true

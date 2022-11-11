@@ -1,6 +1,9 @@
-
+VERSION = $(shell jq -r '.version' <package.json)
+REGISTRY = jmv2
+IMGNAME = team-controller
+TAG ?= $(VERSION)
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= $(REGISTRY)/$(IMGNAME)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.25.0
 
@@ -73,11 +76,14 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: test ## Build docker image with the manager.
-	docker build -t ${IMG} .
+	docker image inspect ${IMG}:${TAG} >/dev/null 2>&1 || \
+	docker build -t ${IMG}:${TAG} .
+	docker image tag ${IMG}:${TAG} ${IMG}:latest
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
-	docker push ${IMG}
+	docker push ${IMG}:${TAG}
+	docker push ${IMG}:latest
 
 # PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
