@@ -30,7 +30,7 @@ jobs:
   bump_build_push:
     needs: detect_changes
     if: needs.detect_changes.outputs.bump_app == 'true'
-    name: Bump Version(s)
+    name: Bump Version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
