@@ -22,7 +22,6 @@ jobs:
         filters: |
           bump_app:
             - 'api/**'
-            - 'config/**'
             - 'controllers/**'
             - '*go*'
             - 'package.json'

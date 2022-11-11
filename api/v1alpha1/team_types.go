@@ -30,7 +30,7 @@ type TeamSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Name of the Role for this Team object
-	//RoleName string `json:"roleName,omitempty"`
+	RoleName string `json:"roleName,omitempty"`
 
 	// Name of the Group for the RoleBinding
 	GroupName string `json:"groupName,omitempty"`
