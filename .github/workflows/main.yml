@@ -51,7 +51,7 @@ jobs:
           skip-tag: 'true'
           skip-push: 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
       - name: Build and push Docker image
         if: needs.detect_changes.outputs.bump_app == 'true'
         run: |
@@ -72,5 +72,5 @@ jobs:
       - name: Push Changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           tags: true
