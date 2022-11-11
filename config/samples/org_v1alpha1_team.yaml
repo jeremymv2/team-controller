@@ -9,4 +9,9 @@ metadata:
     app.kubernetes.io/created-by: team-controller
   name: team-sample
 spec:
-  # TODO(user): Add fields here
+  groupName: foogroup
+  roleName: team-ns-role
+  roleBindings:
+    # roleName: namespaceName
+    - roleName: postgres-rw
+      nameSpace: pgo-team-sample

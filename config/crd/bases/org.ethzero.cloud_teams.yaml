@@ -37,6 +37,25 @@ spec:
             properties:
               groupName:
                 description: Name of the Group for the RoleBinding
+                maxLength: 15
+                minLength: 1
+                type: string
+              roleBindings:
+                items:
+                  properties:
+                    nameSpace:
+                      type: string
+                    roleName:
+                      type: string
+                  type: object
+                maxItems: 500
+                minItems: 1
+                type: array
+                uniqueItems: true
+              roleName:
+                description: Name of the Role for this Team object
+                maxLength: 15
+                minLength: 1
                 type: string
             type: object
           status:

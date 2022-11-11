@@ -18,8 +18,10 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	v1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -54,6 +56,7 @@ type TeamReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
 func (r *TeamReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
+	log.V(1).Info("In Reconciler..")
 	/*
 		### 1: Load the Team by name
 		We'll fetch the Team using our client.  All client methods take a
@@ -83,29 +86,64 @@ func (r *TeamReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	log.V(1).Info("created Namespace for Team", "team", team.Name)
 
-	/*
-		roleBinding := &rbacv1.RoleBinding{
+	roleBindingSpec := &rbacv1.RoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "RoleBinding",
+			APIVersion: "rbac.authorization.k8s.io/v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      fmt.Sprintf("team-rolebinding-%s", team.Name),
+			Namespace: team.Name,
+		},
+		Subjects: []rbacv1.Subject{
+			{
+				Kind: "Group",
+				Name: team.Spec.GroupName,
+			},
+		},
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: "rbac.authorization.k8s.io",
+			Kind:     "ClusterRole",
+			Name:     "team-ns-role",
+		},
+	}
+
+	if err := r.Create(ctx, roleBindingSpec); err != nil {
+		log.Error(err, "unable to create RoleBinding for Team", "team", team.Name)
+		return ctrl.Result{}, err
+	}
+
+	log.V(1).Info("created RoleBinding for Team", "team", team.Name)
+
+	for _, binding := range team.Spec.RoleBindings {
+		roleBindingSpec := &rbacv1.RoleBinding{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "RoleBinding",
 				APIVersion: "rbac.authorization.k8s.io/v1",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("ad-kubernetes-%s", req.NamespacedName),
-				Namespace: namespaceName,
+				Name:      fmt.Sprintf("team-rolebinding-%s", binding.RoleName),
+				Namespace: binding.NameSpace,
 			},
-			Subjects: []v1beta1.Subject{
-				v1beta1.Subject{
+			Subjects: []rbacv1.Subject{
+				{
 					Kind: "Group",
-					Name: fmt.Sprintf("ad-kubernetes-%s", namespaceName),
+					Name: team.Spec.GroupName,
 				},
 			},
-			RoleRef: v1beta1.RoleRef{
+			RoleRef: rbacv1.RoleRef{
 				APIGroup: "rbac.authorization.k8s.io",
 				Kind:     "ClusterRole",
-				Name:     "edit",
+				Name:     binding.RoleName,
 			},
 		}
-	*/
+
+		if err := r.Create(ctx, roleBindingSpec); err != nil {
+			log.Error(err, "unable to create additional Binding", "bindingNameSpace", binding.NameSpace, "bindingRoleName", binding.RoleName)
+			return ctrl.Result{}, err
+		}
+		log.V(1).Info("created additional Binding", "bindingNameSpace", binding.NameSpace, "bindingRoleName", binding.RoleName)
+	}
 
 	return ctrl.Result{}, nil
 }

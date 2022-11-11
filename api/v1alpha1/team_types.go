@@ -24,16 +24,31 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type additionalRoleBindings struct {
+	RoleName  string `json:"roleName,omitempty"`
+	NameSpace string `json:"nameSpace,omitempty"`
+}
+
 // TeamSpec defines the desired state of Team
 type TeamSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Name of the Role for this Team object
+	// +kubebuilder:validation:MaxLength=15
+	// +kubebuilder:validation:MinLength=1
 	RoleName string `json:"roleName,omitempty"`
 
 	// Name of the Group for the RoleBinding
+	// +kubebuilder:validation:MaxLength=15
+	// +kubebuilder:validation:MinLength=1
 	GroupName string `json:"groupName,omitempty"`
+
+	// +kubebuilder:validation:MaxItems=500
+	// +kubebuilder:validation:MinItems=1
+	// +kubebuilder:validation:UniqueItems=true
+	// +optional
+	RoleBindings []additionalRoleBindings `json:"roleBindings,omitempty"`
 
 	// A selector for finding namespaces for the RoleBinding
 	//NameSpaceSelector string `json:"nameSpaceSelector,omitempty"`
