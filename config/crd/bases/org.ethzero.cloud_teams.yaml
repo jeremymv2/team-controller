@@ -51,7 +51,6 @@ spec:
                 maxItems: 500
                 minItems: 1
                 type: array
-                uniqueItems: true
               roleName:
                 description: Name of the Role for this Team object
                 maxLength: 15

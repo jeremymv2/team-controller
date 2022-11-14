@@ -4,9 +4,9 @@ metadata:
   labels:
     app.kubernetes.io/name: team
     app.kubernetes.io/instance: team-sample
-    app.kubernetes.io/part-of: team-controller
+    app.kubernetes.io/part-of: team-rbac-controller
     app.kuberentes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: team-controller
+    app.kubernetes.io/created-by: team-rbac-controller
   name: team-sample
 spec:
   groupName: foogroup

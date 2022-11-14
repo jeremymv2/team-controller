@@ -1,6 +1,6 @@
 VERSION = $(shell jq -r '.version' <package.json)
 REGISTRY = jmv2
-IMGNAME = team-controller
+IMGNAME = team-rbac-controller
 TAG ?= $(VERSION)
 # Image URL to use all building/pushing image targets
 IMG ?= $(REGISTRY)/$(IMGNAME)

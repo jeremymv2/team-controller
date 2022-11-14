@@ -1,8 +1,8 @@
 domain: ethzero.cloud
 layout:
 - go.kubebuilder.io/v3
-projectName: team-controller
-repo: github.com/jeremymv2/team-controller
+projectName: team-rbac-controller
+repo: github.com/jeremymv2/team-rbac-controller
 resources:
 - api:
     crdVersion: v1
@@ -11,7 +11,7 @@ resources:
   domain: ethzero.cloud
   group: org
   kind: Team
-  path: github.com/jeremymv2/team-controller/api/v1alpha1
+  path: github.com/jeremymv2/team-rbac-controller/api/v1alpha1
   version: v1alpha1
   webhooks:
     defaulting: true

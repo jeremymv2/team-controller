@@ -5,15 +5,15 @@ metadata:
     app.kubernetes.io/name: clusterrolebinding
     app.kubernetes.io/instance: manager-rolebinding
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: team-controller
-    app.kubernetes.io/part-of: team-controller
+    app.kubernetes.io/created-by: team-rbac-controller
+    app.kubernetes.io/part-of: team-rbac-controller
     app.kubernetes.io/managed-by: kustomize
   name: manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: team-controller-manager-role
+  name: team-rbac-controller-manager-role
 subjects:
 - kind: ServiceAccount
-  name: team-controller-controller-manager-controller-manager
-  namespace: team-controller-system
+  name: team-rbac-controller-controller-manager-controller-manager
+  namespace: team-rbac-controller-system

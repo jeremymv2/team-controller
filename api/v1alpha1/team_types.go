@@ -46,7 +46,6 @@ type TeamSpec struct {
 
 	// +kubebuilder:validation:MaxItems=500
 	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:UniqueItems=true
 	// +optional
 	RoleBindings []additionalRoleBindings `json:"roleBindings,omitempty"`
 

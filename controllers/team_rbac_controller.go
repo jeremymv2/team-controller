@@ -28,7 +28,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	orgv1alpha1 "github.com/jeremymv2/team-controller/api/v1alpha1"
+	orgv1alpha1 "github.com/jeremymv2/team-rbac-controller/api/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 

@@ -45,8 +45,8 @@ jobs:
         id: app-version-bump
         uses: 'phips28/gh-action-bump-version@master'
         with:
-          minor-wording:  'add,Adds,new'
           major-wording:  'MAJOR,cut-major'
+          minor-wording:  'add,Adds,new'
           patch-wording:  'patch,fixes'     # Providing patch-wording will override commits
                                             # defaulting to a patch bump.
           rc-wording:     'RELEASE,alpha'
@@ -65,13 +65,13 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git commit -am 'CI: ${{ steps.app-version-bump.outputs.newTag }}'
+          git commit -am 'Bump Version: ${{ steps.app-version-bump.outputs.newTag }}'
       - name: Tag repo
         if: needs.detect_changes.outputs.bump_app == 'true'
         uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{ steps.app-version-bump.outputs.newTag }}
-          message: "CI: bump to new version ${{ steps.app-version-bump.outputs.newTag }}"
+          message: "Bump Version: ${{ steps.app-version-bump.outputs.newTag }}"
       - name: Push Changes
         uses: ad-m/github-push-action@master
         with:
